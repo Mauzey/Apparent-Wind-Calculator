@@ -28,7 +28,7 @@ float tWindHdg; // True wind heading, relative to north (degrees)
 void main(int argc, const char* argv[]) {
 	aWindSpd = calcAWindSpd(tWindAng, tWindSpd, vesselSpd);
 	aWindAng = calcAWindAng(tWindAng, tWindSpd, vesselSpd, aWindSpd);
-	tWindHdg = fmod(tWindAng + vesselHdg, 360);
+	tWindHdg = degrees(fmod(radians(tWindAng) + radians(vesselHdg), 360));
 
 	// Ensure tWindHdg is always a positive bearing
 	if (tWindHdg < 0) tWindHdg += 360;
@@ -44,7 +44,7 @@ void main(int argc, const char* argv[]) {
 	cout << "The following is true:" << endl;
 	cout << "----------------------" << endl;
 	cout << "Apparent Wind Speed: " << aWindSpd << endl;
-	cout << "Apparent Wind Angle: " << aWindAng << "(Relative to vessel axis)" << endl;
+	cout << "Apparent Wind Angle: " << aWindAng << " (Relative to vessel axis)" << endl;
 	cout << "True Wind Heading: " << tWindHdg << " (Relative to north)";
 
 	_getch();
@@ -61,9 +61,9 @@ float calcAWindAng(float twa, float tws, float vs, float aws) {
 
 	// Sign = 1 means starboard side, Sign = -1 means port side
 	int sign = 1;
-	if (tWindAng < 0) {
+	if (twa < 0) {
 		sign = -1;
-		tWindAng *= -1;
+		twa *= -1;
 	}
 
 	angle = degrees(acos((tws * cos(radians(twa)) + vs) / aws));
@@ -71,8 +71,6 @@ float calcAWindAng(float twa, float tws, float vs, float aws) {
 	if (angle < 0) angle += 180;
 
 	return angle * sign;
-
-	//return degrees(acos((tws * cos(radians(twa)) + vs) / aws));
 }
 
 // Returns x in radians
